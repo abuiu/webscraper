@@ -2,11 +2,13 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const Sentiment = require('sentiment');
 const winston = require('winston');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 1337;
 
 app.use(express.json());
+app.use(cors());
 
 // Configure Winston for error logging
 const logger = winston.createLogger({
