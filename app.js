@@ -31,6 +31,9 @@ app.post('/scrape', async (req, res) => {
       const page = await browser.newPage();
       await page.goto(`${url}?page=${pageIdx}`);
 
+      // Wait for specific elements or events to appear on the page
+      await page.waitForSelector('h1, h2, h3, h4, h5, h6, p, img, a');
+
       if (elements.includes('headings')) {
         const headings = await page.evaluate(() =>
           Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).map((h) => h.textContent)
