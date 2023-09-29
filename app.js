@@ -6,9 +6,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Define an endpoint for scraping with specified elements
+// Define an endpoint for scraping with specified elements and filters
 app.post('/scrape', async (req, res) => {
-  const { url, elements } = req.body;
+  const { url, elements, paragraphFilter } = req.body;
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
@@ -33,9 +33,15 @@ app.post('/scrape', async (req, res) => {
     }
 
     if (elements.includes('paragraphs')) {
-      const paragraphs = await page.evaluate(() =>
+      let paragraphs = await page.evaluate(() =>
         Array.from(document.querySelectorAll('p')).map((p) => p.textContent)
       );
+
+      // Apply paragraph filter if specified
+      if (paragraphFilter) {
+        paragraphs = paragraphs.filter((p) => p.includes(paragraphFilter));
+      }
+
       scrapedData.paragraphs = paragraphs;
     }
 
