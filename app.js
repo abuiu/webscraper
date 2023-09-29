@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Define an endpoint for scraping with specified elements, filters, and sentiment analysis
+// Define an endpoint for scraping with specified elements, filters, sentiment analysis, and word count
 app.post('/scrape', async (req, res) => {
   const { url, elements, paragraphFilter, pageCount } = req.body;
 
@@ -62,6 +62,13 @@ app.post('/scrape', async (req, res) => {
           const result = sentiment.analyze(paragraph);
           scrapedData.paragraphs[index] = { text: paragraph, sentiment: result.score };
         });
+
+        // Calculate word count for paragraphs
+        const wordCount = paragraphs.reduce((count, paragraph) => {
+          const words = paragraph.split(/\s+/); // Split by whitespace to count words
+          return count + words.length;
+        }, 0);
+        scrapedData.wordCount = (scrapedData.wordCount || 0) + wordCount;
       }
 
       if (elements.includes('images')) {
